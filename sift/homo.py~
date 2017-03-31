@@ -1,0 +1,14 @@
+"""
+script pour appliquer des homographies a des images
+"""
+
+import numpy as np
+import cv2
+
+ima = cv2.imread("input_0.png")
+print(ima.shape)
+rows, cols = ima.shape[:2]
+M = cv2.getRotationMatrix2D((cols/2, rows/2), 90, 1)
+rotated = cv2.warpAffine(ima, M, (cols, rows))
+cv2.imshow("rotate", rotated)
+cv2.waitKey(0)

@@ -1,0 +1,27 @@
+#include<vector>
+#include "opencv2/core.hpp"
+#include "opencv2/imgproc.hpp"
+#include "opencv2/features2d.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/calib3d.hpp"
+#include "opencv2/features2d.hpp"
+
+  
+
+
+using namespace cv;
+using namespace std;
+using namespace cv::xfeatures2d;
+
+int main(int argc, char *argv[]){
+  Ptr<SIFT> f2d = SIFT::create(); 
+  Mat input = cv::imread("input_0.png"); 
+  Mat input2 = cv::imread("input_1.png");
+  std::vector<KeyPoint> keypoints_1, keypoints_2;
+  f2d->detect(input, keypoints_1);
+
+    // Add results to image and save.
+  cv::Mat output;
+  cv::drawKeypoints(input, keypoints_1, output);
+  cv::imwrite("sift_result.jpg", output);
+}
