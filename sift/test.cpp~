@@ -1,0 +1,26 @@
+#include<vector>
+#include<iostream>
+#include "opencv2/core.hpp"
+#include "opencv2/imgproc.hpp"
+#include "opencv2/xfeatures2d.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/calib3d.hpp"
+#include <opencv2/xfeatures2d/nonfree.hpp>
+#include<random>
+
+
+using namespace cv;
+using namespace std;
+using namespace cv::xfeatures2d;
+//basic algebra
+cv::Point2f operator*(cv::Mat M, const cv::Point2f& p)
+{ 
+    cv::Mat_<double> src(3/*rows*/,1 /* cols */); 
+
+    src(0,0)=p.x; 
+    src(1,0)=p.y; 
+    src(2,0)=1.0; 
+
+    cv::Mat_<double> dst = M*src; //USE MATRIX ALGEBRA 
+    return cv::Point2f(dst(0,0),dst(1,0)); 
+}

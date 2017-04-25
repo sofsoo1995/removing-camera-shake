@@ -13,7 +13,149 @@
 using namespace cv;
 using namespace std;
 using namespace cv::xfeatures2d;
+//basic algebra
+cv::Point2f operator*(cv::Mat M, const cv::Point2f& p)
+{ 
+    cv::Mat_<double> src(3/*rows*/,1 /* cols */); 
 
+    src(0,0)=p.x; 
+    src(1,0)=p.y; 
+    src(2,0)=1.0; 
+
+    cv::Mat_<double> dst = M*src; //USE MATRIX ALGEBRA 
+    return cv::Point2f(dst(0,0)/dst(2,0),dst(1,0)/dst(2,0)); 
+} 
+
+//---------code for ORSA-------------
+vector<int> generate_random_sample(int n_sample,vector<DMatch> good_matches){
+  std::random_device rd;
+  std::mt19937 rng(rd());
+  std::uniform_int_distribution<int> uni(0, good_matches.size());
+  vector<int> index;
+  int a = n_sample;
+  //
+  while(a > 0){
+    auto random_integer = uni(rng);
+    if(find(index.begin(), index.end(), random_integer) == index.end()){
+      index.push_back(random_integer);
+      a--;
+    }
+  }
+  return index;
+}
+
+double symetric_error(Mat_<double> M, Point2f X1, Point2f X2){
+  Point2f p= M*X1-X2;
+  Point2f p2= M.inv()*X2-X1;
+  return sqrt(p.x*p.x + p.y*p.y) + sqrt(p2.x*p2.x + p2.y*p2.y);
+}
+Mat homography(vector<int> index, vector<DMatch> good_matches, 
+		vector<KeyPoint> keypoints_1, vector<KeyPoint> keypoints_2){
+  Mat_<double> H(3,3);//solution
+  
+  Mat_<double> A(index.size()*2, 9);// matrix to solve
+  
+  vector<Point2f> list_X;//list of points X
+  vector<Point2f> list_Xp;//list of X'
+  unsigned int N = index.size();//size
+  //centroid for matrix T and T'
+  Point2f c(0,0);
+  Point2f cp(0,0);
+  
+  for(unsigned int i=0;i<index.size();i++){
+    int b = index[i];
+    DMatch match = good_matches[b];
+    int queryIdx = match.queryIdx;
+    int trainIdx = match.trainIdx;
+    KeyPoint xi = keypoints_1[queryIdx];
+    KeyPoint xiprime = keypoints_2[trainIdx];
+    
+    Point2f X = xi.pt;
+    Point2f Xprime = xiprime.pt;
+    list_X.push_back(X);
+    list_Xp.push_back(Xprime);
+    c += X;
+    cp += Xprime;
+    
+    //creation of this matrix to find the best homography
+    //Point2f test = xi.pt;
+    //cout<<"point:" <<test<<endl;
+  }
+
+
+  c = (1.0/N) * c;
+  cp = (1.0/N) * cp;
+  Mat_<double> T(3,3);//isotropic transfo of X
+  Mat_<double> Tp(3,3);// trans for X'
+  T = Mat::zeros(3,3,CV_32F);
+  Tp = Mat::zeros(3,3, CV_32F);
+  double var = 0;
+  double varp =0;
+
+    //variance of X and X'
+  for (unsigned int i=0; i < index.size(); i++) {
+    Point2f v = list_X[i]-c;
+    Point2f vp = list_Xp[i]-cp;
+    var += v.x*v.x + v.y*v.y;
+    varp += vp.x*vp.x + vp.y*vp.y;
+  }
+  //construction of T
+  var = (1.0/(double)N) *var;
+  varp = (1.0/(double)N) * varp;
+  var = sqrt(var);
+  varp = sqrt(varp);
+  T.at<double>(0,0)= 1/var;
+  T.at<double>(1,1)= 1/var;
+  T.at<double>(2,2)= 1;
+  T.at<double>(0,2)=c.x/var;  
+  T.at<double>(1,2)= c.y/var;
+  Tp.at<double>(0,0)= 1/varp;
+  Tp.at<double>(1,1)= 1/varp;
+  Tp.at<double>(2,2)= 1;
+  Tp.at<double>(0,2)=cp.x/varp;  
+  Tp.at<double>(1,2)= cp.y/varp;
+  
+  for (unsigned int i=0; i < index.size(); i++) {
+    Point2f X = (list_X[i] - c)/var;
+    Point2f Xprime = (list_Xp[i]-cp)/varp;
+    //Point2f X = (list_X[i]);
+    //Point2f Xprime = (list_Xp[i]);
+    //Construction of A (Ah=0)
+    A.at<double>(2*i, 0) = X.x;
+    A.at<double>(2*i, 1) = X.y;
+    A.at<double>(2*i, 2) = 1;
+    A.at<double>(2*i, 3) = 0;
+    A.at<double>(2*i, 4) = 0;
+    A.at<double>(2*i, 5) = 0;
+    A.at<double>(2*i, 6) = -Xprime.x*X.x;
+    A.at<double>(2*i, 7) = -Xprime.x*X.y;
+    A.at<double>(2*i, 8) = -Xprime.x;
+    A.at<double>(2*i+1, 0) = 0;
+    A.at<double>(2*i+1, 1) = 0;
+    A.at<double>(2*i+1, 2) = 0;
+    A.at<double>(2*i+1, 3) = X.x;
+    A.at<double>(2*i+1, 4) = X.y;
+    A.at<double>(2*i+1, 5) = 1;
+    A.at<double>(2*i+1, 6) = -Xprime.y * X.x;
+    A.at<double>(2*i+1, 7) = -Xprime.y * X.y;
+    A.at<double>(2*i+1, 8) = -Xprime.y;
+  }
+  
+  Mat S, U, Vt, V;
+  cv::SVD::compute(A, S, U, Vt, cv::SVD::FULL_UV);
+  cv::transpose(Vt, V);
+  //cout<<"S"<<S<<endl;
+  Mat y = Vt.row(Vt.cols -1);
+  y = y.clone();
+  H = y.reshape(0,3);
+  H = T.inv()*H*Tp;
+  double scale = H.at<double>(2,2);
+  //cout<<"H"<<endl<<H<<endl<<endl;
+  //cout<<"scale:"<<scale<<endl;
+  H = H * (1.0/scale);
+  return H;
+  
+}
 bool compareByDistance(const DMatch &a, const DMatch &b){
   return a.distance < b.distance;
 }
@@ -30,14 +172,17 @@ int main(int argc, char *argv[]){
       std::cout<< " --(!) Error reading images " << std::endl; 
       return -1; 
     }
+    //SIFt to detect descriptors
   std::vector<KeyPoint> keypoints_1, keypoints_2;
   Mat descriptor_1, descriptor_2;
   f2d->detectAndCompute(input, Mat(), keypoints_1, descriptor_1);
   f2d->detectAndCompute(input2,Mat(), keypoints_2, descriptor_2);
+
+  //use Flann to find matches
   FlannBasedMatcher matcher;
   std::vector<DMatch> matches;
   matcher.match(descriptor_1, descriptor_2, matches);
-  double max_dist = 0; double min_dist = 100;
+  double max_dist = 0; double min_dist = 10000000;
   for(int i = 0; i < descriptor_1.rows; i++ ){ 
     double dist = matches[i].distance;
     if( dist < min_dist ) min_dist = dist;
@@ -57,30 +202,19 @@ int main(int argc, char *argv[]){
   
 
   //1) Select random points
-  std::random_device rd;
-  std::mt19937 rng(rd());
-  std::uniform_int_distribution<int> uni(0, good_matches.size());
+  int n_iter=2;
+  for(int i=0;i<n_iter;i++){
   vector<int> index;
-  int a = 4;
-  while(a > 0){
-    auto random_integer = uni(rng);
-    if(index.find(random_integer) == index.end()){
-      index.push_back(random_integer);
-      a--;
-    }
+  index = generate_random_sample(6, good_matches);
+  Mat H = homography(index, good_matches, keypoints_1, keypoints_2);
+  Point2f pt = keypoints_1[0].pt;
+  Point2f pt2 = keypoints_2[0].pt;
+  cout<<H<<endl;
+  cout<<"error :"<< symetric_error(H,pt, pt2)<<endl;
   }
-  vector<KeyPoint> X;
-  vector<KeyPoint> Xprime;
-  for(auto b : index){
-    DMatch match = good_matches[b];
-    int queryIdx = match.queryIdx;
-    int trainIdx = match.trainIdx;
-    KeyPoint xi = keypoints_1[queryIdx];
-    KeyPoint xiprime = keypoints_2[trainIdx];
-    X.push_back(xi);
-    Xprime.push_back(xiprime);
-  }
-
+  //creation of matrix
+  
+  
     // Add results to image and save.
   //cv::Mat output;
   //cv::drawKeypoints(input, keypoints_1, output);
