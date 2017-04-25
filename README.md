@@ -8,6 +8,16 @@ Removing Camera Shake via Weighted Fourier Burst Accumulation
  example : ./main anthropologie/REG_00
  there are 8 images
 
+
+SIFT
+important for me :
+
+"LD_LIBRARY_PATH=/usr/local/lib"
+
+"export LD_LIBRARY_PATH"
+
+"g++ -L-I/usr/local/lib `pkg-config --cflags opencv` matcher_simple.cpp `pkg-config --libs opencv` -o match -std=c++11"
+
 This project is an application of the following article :
 https://www.researchgate.net/publication/275964541_Burst_Deblurring_Removing_Camera_Shake_Through_Fourier_Burst_Accumulation
  
