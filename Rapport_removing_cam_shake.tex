@@ -1,0 +1,62 @@
+\documentclass[a4paper,10pt]{report}
+\usepackage[utf8]{inputenc}
+
+% Title Page
+\title{Implémentation d'article de recherche \\ 
+Removing Camera Shake via Weighted Fourier Burst Accumulation}
+\author{Sofiane Horache, Roman Fenioux}
+\date{April 2017}
+
+
+\begin{document}
+\maketitle
+
+% pour éviter d'avoir la numérotation 0.1 0.2 etc avant les sections
+\setcounter{secnumdepth}{0}
+
+% 1st page, résumé de l'article
+\section{Introduction}
+\paragraph{}
+Le problème adressé ici est le flou de bougé, présent notamment dans les photographies 
+amateur prises à la main dans des environnements mal éclairés. Pour avoir une photographie 
+suffisament exposée il est souvent necessaire d'augmenter le temps d'exposition lorsqu'on 
+ne peut ou ne veut pas agir sur l'ouverture ou la sensibilité de l'appareil. Mais si la 
+position de l'appareil change durant l'acquisition, on voit apparaître du flou dans la direction
+du mouvement. 
+
+\section{Approche de l'article}
+\paragraph{}
+Le mouvement de l'appareil durant la prise de vue peut-être modélisé par une convolution de l'image
+par un noyau de flou. L'approche utilisée ici consiste à prendre une rafale d'images au lieu 
+d'une seule, puis à les combiner pour éliminer ce flou. En effet, la direction du mouvement est 
+aléatoire d'une image à l'autre et on veut donc récupérer l'information que contient chaque image
+pour obtenir une image nette. Cette technique permet même de débruiter l'image selon les
+auteurs. Pour ce faire l'article propose de calculer une moyenne pondérée de leurs transformées 
+de Fourier. 
+
+\paragraph{}
+L'avantage principal de cette méthode est qu'elle ne demande pas d'estimation explicite du noyau 
+de flou. 
+\\
+\\
+A compléter
+
+\section{Notre implémentation}
+\paragraph{}
+A compléter : explications sur ce qu'on a fait
+
+\section{Nos résultats}
+\paragraph{}
+A compléter : illustrations de nos tests et résultats..
+
+\section{Analyse et Commentaires}
+\paragraph{}
+A compléter : analyse de la méthode, points forts / faibles, limites et améliorations possibles
+
+
+
+
+\begin{abstract}
+\end{abstract}
+
+\end{document}          
