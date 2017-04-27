@@ -10,7 +10,7 @@ print(ima.shape)
 rows, cols = ima.shape[:2]
 angle = np.array([15, 90])
 for a in angle:
-    M = cv2.getRotationMatrix2D((0, 0), a, 1)
+    M = cv2.getRotationMatrix2D((cols/2, rows/2), a, 1)
     print(M)
     alpha = np.arctan(cols/rows)
     R = np.sqrt((cols/2)**2 + (rows/2)**2)

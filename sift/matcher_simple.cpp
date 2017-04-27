@@ -46,6 +46,8 @@ vector<int> generate_random_sample(int n_sample,vector<DMatch> good_matches){
 
 double symetric_error(Mat_<double> M, Point2f X1, Point2f X2){
   Point2f p= M*X1-X2;
+  cout<<"X1:"<<X1<<endl<<"X2:"<<X2<<endl;
+  cout<<"HX1:"<<M*X1<<endl;
   Point2f p2= M.inv()*X2-X1;
   return sqrt(p.x*p.x + p.y*p.y) + sqrt(p2.x*p2.x + p2.y*p2.y);
 }
@@ -107,13 +109,13 @@ Mat homography(vector<int> index, vector<DMatch> good_matches,
   T.at<double>(0,0)= 1/var;
   T.at<double>(1,1)= 1/var;
   T.at<double>(2,2)= 1;
-  T.at<double>(0,2)=c.x/var;  
-  T.at<double>(1,2)= c.y/var;
+  T.at<double>(0,2)=-c.x/var;  
+  T.at<double>(1,2)= -c.y/var;
   Tp.at<double>(0,0)= 1/varp;
   Tp.at<double>(1,1)= 1/varp;
   Tp.at<double>(2,2)= 1;
-  Tp.at<double>(0,2)=cp.x/varp;  
-  Tp.at<double>(1,2)= cp.y/varp;
+  Tp.at<double>(0,2)=-cp.x/varp;  
+  Tp.at<double>(1,2)= -cp.y/varp;
   
   for (unsigned int i=0; i < index.size(); i++) {
     Point2f X = (list_X[i] - c)/var;
@@ -148,7 +150,7 @@ Mat homography(vector<int> index, vector<DMatch> good_matches,
   Mat y = Vt.row(Vt.cols -1);
   y = y.clone();
   H = y.reshape(0,3);
-  H = T.inv()*H*Tp;
+  H = Tp.inv()*H*T;
   double scale = H.at<double>(2,2);
   //cout<<"H"<<endl<<H<<endl<<endl;
   //cout<<"scale:"<<scale<<endl;
@@ -202,13 +204,16 @@ int main(int argc, char *argv[]){
   
 
   //1) Select random points
-  int n_iter=2;
+  int n_iter=1;
   for(int i=0;i<n_iter;i++){
   vector<int> index;
   index = generate_random_sample(6, good_matches);
   Mat H = homography(index, good_matches, keypoints_1, keypoints_2);
-  Point2f pt = keypoints_1[0].pt;
-  Point2f pt2 = keypoints_2[0].pt;
+  DMatch m = good_matches[0];
+  int queryIdx = m.queryIdx;
+  int trainIdx = m.trainIdx;
+  Point2f pt = keypoints_1[queryIdx].pt;
+  Point2f pt2 = keypoints_2[trainIdx].pt;
   cout<<H<<endl;
   cout<<"error :"<< symetric_error(H,pt, pt2)<<endl;
   }
