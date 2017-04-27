@@ -7,12 +7,26 @@
 #include "opencv2/calib3d.hpp"
 #include <opencv2/xfeatures2d/nonfree.hpp>
 #include<random>
-  
+#include<cmath>
+#include<cfloat>
 
 
 using namespace cv;
 using namespace std;
 using namespace cv::xfeatures2d;
+template <typename T>
+vector<int> argsort(const vector<T> &v) {
+
+  // initialize original index locations
+  vector<int> idx(v.size());
+  iota(idx.begin(), idx.end(), 0);
+
+  // sort indexes based on comparing values in v
+  sort(idx.begin(), idx.end(),
+       [&v](int i1, int i2) {return v[i1] < v[i2];});
+
+  return idx;
+}
 //basic algebra
 cv::Point2f operator*(cv::Mat M, const cv::Point2f& p)
 { 
@@ -25,6 +39,19 @@ cv::Point2f operator*(cv::Mat M, const cv::Point2f& p)
     cv::Mat_<double> dst = M*src; //USE MATRIX ALGEBRA 
     return cv::Point2f(dst(0,0)/dst(2,0),dst(1,0)/dst(2,0)); 
 } 
+
+//Combinatory
+int logCombi(int n,int k){
+  int res_n = 0;
+  int res_k =0;
+  int res_nk=0;
+  for (int i=1; i <= n; i++) {
+    res_n += log(i);
+    if(i == k) res_k = res_n;
+    if(i == (n-k)) res_nk = res_n;
+  }
+  return res_n - res_k - res_nk;
+}
 
 //---------code for ORSA-------------
 vector<int> generate_random_sample(int n_sample,vector<DMatch> good_matches){
@@ -43,17 +70,31 @@ vector<int> generate_random_sample(int n_sample,vector<DMatch> good_matches){
   }
   return index;
 }
-
+void bestNFA(vector<double> errors, int n, int n_sample, int alpha0, double &minNFA, int &bestk){
+  int result =0;
+  double minNFA = DBL_MAX-1; 
+  int bestk = 0;
+  for(int i =n_sample+1;i<(int)errors.size(); i++){
+    double err;
+    if(errors[i] == 0) err=-37;
+    else err = log(errors[i]);
+    double nfa = log(n-n_sample)+logCombi(n,i)+ logCombi(i,n_sample) + (i-n_sample)*(2*err+log(alpha0));
+    if(nfa < minNFA){
+      minNFA = nfa;
+      bestk=i;
+    }
+  }
+}
 double symetric_error(Mat_<double> M, Point2f X1, Point2f X2){
   Point2f p= M*X1-X2;
-  cout<<"X1:"<<X1<<endl<<"X2:"<<X2<<endl;
-  cout<<"HX1:"<<M*X1<<endl;
+  //cout<<"X1:"<<X1<<endl<<"X2:"<<X2<<endl;
+  //cout<<"HX1:"<<M*X1<<endl;
   Point2f p2= M.inv()*X2-X1;
   return sqrt(p.x*p.x + p.y*p.y) + sqrt(p2.x*p2.x + p2.y*p2.y);
 }
-Mat homography(vector<int> index, vector<DMatch> good_matches, 
-		vector<KeyPoint> keypoints_1, vector<KeyPoint> keypoints_2){
-  Mat_<double> H(3,3);//solution
+int homography(vector<int> index, vector<DMatch> good_matches, 
+	       vector<KeyPoint> keypoints_1, vector<KeyPoint> keypoints_2, Mat &H ){
+  
   
   Mat_<double> A(index.size()*2, 9);// matrix to solve
   
@@ -155,8 +196,12 @@ Mat homography(vector<int> index, vector<DMatch> good_matches,
   //cout<<"H"<<endl<<H<<endl<<endl;
   //cout<<"scale:"<<scale<<endl;
   H = H * (1.0/scale);
-  return H;
   
+  // *****to check the conditionning of h
+  
+  //cout<<S.at<double>(0,0)<<endl;
+  //cout<<S.at<double>(S.rows-1,0)<<endl;
+  return 1;
 }
 bool compareByDistance(const DMatch &a, const DMatch &b){
   return a.distance < b.distance;
@@ -193,7 +238,7 @@ int main(int argc, char *argv[]){
   //we take the twenty best matches.
   std::sort(matches.begin(), matches.end(), compareByDistance);
   std::vector< DMatch > good_matches ;
-  good_matches.assign(matches.begin(), matches.begin()+20);
+  good_matches.assign(matches.begin(), matches.end());
       
   Mat img_matches;
   drawMatches( input, keypoints_1, input2, keypoints_2,
@@ -203,20 +248,36 @@ int main(int argc, char *argv[]){
   // calcul homography
   
 
-  //1) Select random points
+  
   int n_iter=1;
+  int n = (int) good_matches.size();
+  int n_sample = 4;
   for(int i=0;i<n_iter;i++){
   vector<int> index;
-  index = generate_random_sample(6, good_matches);
-  Mat H = homography(index, good_matches, keypoints_1, keypoints_2);
-  DMatch m = good_matches[0];
-  int queryIdx = m.queryIdx;
-  int trainIdx = m.trainIdx;
-  Point2f pt = keypoints_1[queryIdx].pt;
-  Point2f pt2 = keypoints_2[trainIdx].pt;
-  cout<<H<<endl;
-  cout<<"error :"<< symetric_error(H,pt, pt2)<<endl;
+  //1) draw 4 points
+  index = generate_random_sample(n_sample, good_matches);
+  vector<double> errors;
+  Mat_<double> H(3,3);
+  //2) homography estimation
+  int ratio = homography(index, good_matches, keypoints_1, keypoints_2, H);
+  // 3) calculation of errors for all points 
+  for(auto m : good_matches){
+    int queryIdx = m.queryIdx;
+    int trainIdx = m.trainIdx;
+    Point2f pt = keypoints_1[queryIdx].pt;
+    Point2f pt2 = keypoints_2[trainIdx].pt;
+    //cout<<H<<endl;
+    errors.push_back(symetric_error(H, pt, pt2));
+    cout<<"error :"<< symetric_error(H, pt, pt2)<<endl;
   }
+  //4) sorting the error keep track of indexes of the matches
+  vector<int> index_match = argsort(errors);
+  sort(errors.begin(), errors.end());
+  //5) calculation of the best NFA for this homography
+  int n = (int)good_matches.size();
+  
+  }
+  
   //creation of matrix
   
   
