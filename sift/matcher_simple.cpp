@@ -72,8 +72,8 @@ vector<int> generate_random_sample(int n_sample,vector<DMatch> good_matches){
 }
 void bestNFA(vector<double> errors, int n, int n_sample, int alpha0, double &minNFA, int &bestk){
   int result =0;
-  double minNFA = DBL_MAX-1; 
-  int bestk = 0;
+  minNFA = DBL_MAX-1; 
+  bestk = 0;
   for(int i =n_sample+1;i<(int)errors.size(); i++){
     double err;
     if(errors[i] == 0) err=-37;
