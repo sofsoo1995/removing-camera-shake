@@ -70,7 +70,7 @@ vector<int> generate_random_sample(int n_sample,vector<DMatch> good_matches){
   }
   return index;
 }
-void bestNFA(vector<double> errors, int n, int n_sample, int alpha0, double &minNFA, int &bestk){
+void bestNFA(vector<double> errors, int n, int n_sample, double alpha0, double &minNFA, int &bestk){
   int result =0;
   minNFA = DBL_MAX-1; 
   bestk = 0;
@@ -245,39 +245,69 @@ int main(int argc, char *argv[]){
                good_matches, img_matches, Scalar::all(-1), Scalar::all(-1),
                vector<char>(), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS );
   cv::imwrite(argv[3], img_matches);
-  // calcul homography
+  // calcul homography 
   
-
-  
-  int n_iter=1;
+  //init
+  int n_iter=100;
+  int reserve = n_iter/10;
   int n = (int) good_matches.size();
   int n_sample = 4;
+  double minNFA= DBL_MAX-1;
+  int bestk =1;
+  Mat_<double> bestH(3,3);
+  std::vector< int > inliers; // index of inlier in good match
+
   for(int i=0;i<n_iter;i++){
-  vector<int> index;
-  //1) draw 4 points
-  index = generate_random_sample(n_sample, good_matches);
-  vector<double> errors;
-  Mat_<double> H(3,3);
-  //2) homography estimation
-  int ratio = homography(index, good_matches, keypoints_1, keypoints_2, H);
-  // 3) calculation of errors for all points 
-  for(auto m : good_matches){
-    int queryIdx = m.queryIdx;
-    int trainIdx = m.trainIdx;
-    Point2f pt = keypoints_1[queryIdx].pt;
-    Point2f pt2 = keypoints_2[trainIdx].pt;
-    //cout<<H<<endl;
-    errors.push_back(symetric_error(H, pt, pt2));
-    cout<<"error :"<< symetric_error(H, pt, pt2)<<endl;
+    
+    bool better = false;
+  for(int j =0;j<1;j++){
+    //1) draw 4 points
+    vector<int> rand_sample;
+    rand_sample = generate_random_sample(n_sample, good_matches);
+    vector<double> errors;
+    Mat_<double> H(3,3);
+    //2) homography estimation
+    int ratio = homography(rand_sample, good_matches, keypoints_1, keypoints_2, H);
+    // 3) calculation of errors for all points 
+    for(auto m : good_matches){
+      int queryIdx = m.queryIdx;
+      int trainIdx = m.trainIdx;
+      Point2f pt = keypoints_1[queryIdx].pt;
+      Point2f pt2 = keypoints_2[trainIdx].pt;
+      //cout<<H<<endl;
+      errors.push_back(symetric_error(H, pt, pt2));
+      //cout<<"error :"<< symetric_error(H, pt, pt2)<<endl;
+      
+    }
+    //4) sorting the error keep track of indexes of the matches
+    vector<int> index_match = argsort(errors);
+    sort(errors.begin(), errors.end());
+    //5) calculation of the best NFA for this homography
+    double nfa;
+    int k;
+    double alpha0 = M_PI/(input.rows*input.cols);
+    bestNFA(errors, n, n_sample, alpha0,nfa, k);
+    if (nfa < minNFA) {
+      minNFA = nfa;
+      inliers = index_match;
+      bestH = H;
+      better = true;
+    }
   }
-  //4) sorting the error keep track of indexes of the matches
-  vector<int> index_match = argsort(errors);
-  sort(errors.begin(), errors.end());
-  //5) calculation of the best NFA for this homography
-  int n = (int)good_matches.size();
-  
+  if((better && minNFA<0)|| (i ==n_iter-1 && reserve)) {
+      vector<DMatch> better_good_matches;
+      for(auto inl : inliers){
+	better_good_matches.push_back(good_matches[inl]);
+      }
+      good_matches = better_good_matches;
+      if(reserve){
+	n_iter += reserve;
+	reserve = 0;
+      }
+    }
   }
-  
+  std::cout<<"H :"<<bestH<<endl;
+  cout<<"NFA:"<<minNFA<<endl;
   //creation of matrix
   
   
