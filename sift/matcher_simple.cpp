@@ -9,10 +9,11 @@
 #include<random>
 #include<cmath>
 #include<cfloat>
-
-
+#include <chrono>
+#define EPS 0.0001
 using namespace cv;
 using namespace std;
+using namespace std::chrono;
 using namespace cv::xfeatures2d;
 template <typename T>
 vector<int> argsort(const vector<T> &v) {
@@ -41,23 +42,22 @@ cv::Point2f operator*(cv::Mat M, const cv::Point2f& p)
 } 
 
 //Combinatory
-int logCombi(int n,int k){
-  int res_n = 0;
-  int res_k =0;
-  int res_nk=0;
-  for (int i=1; i <= n; i++) {
-    res_n += log(i);
-    if(i == k) res_k = res_n;
-    if(i == (n-k)) res_nk = res_n;
+double logCombi(int n,int k) {
+  double res = 0.0;
+  if(k>n)return -1;
+  int k0 = k;
+  if(n-k<k) k0 = n-k;
+  for (int i=1; i <= k0; i++) {
+    res += log((double)(n-i+1))-log((double)i);
   }
-  return res_n - res_k - res_nk;
+  return res;
 }
 
 //---------code for ORSA-------------
-vector<int> generate_random_sample(int n_sample,vector<DMatch> good_matches){
+vector<int> generate_random_sample(const int n_sample, const vector<DMatch> good_matches) {
   std::random_device rd;
   std::mt19937 rng(rd());
-  std::uniform_int_distribution<int> uni(0, good_matches.size());
+  std::uniform_int_distribution<int> uni(0, good_matches.size()-1);
   vector<int> index;
   int a = n_sample;
   //
@@ -70,7 +70,7 @@ vector<int> generate_random_sample(int n_sample,vector<DMatch> good_matches){
   }
   return index;
 }
-void bestNFA(vector<double> errors, int n, int n_sample, double alpha0, double &minNFA, int &bestk){
+void bestNFA(const vector<double> log_n, const vector<double> log_k, const vector<double> errors, int n, const int n_sample ,const double alpha0, double &minNFA, int &bestk){
   int result =0;
   minNFA = DBL_MAX-1; 
   bestk = 0;
@@ -78,22 +78,22 @@ void bestNFA(vector<double> errors, int n, int n_sample, double alpha0, double &
     double err;
     if(errors[i] == 0) err=-37;
     else err = log(errors[i]);
-    double nfa = log(n-n_sample)+logCombi(n,i)+ logCombi(i,n_sample) + (i-n_sample)*(2*err+log(alpha0));
+    double nfa = log(n-n_sample)+log_n[i]+ log_k[i] + (i-n_sample)*(2*err+log(alpha0));
     if(nfa < minNFA){
       minNFA = nfa;
       bestk=i;
     }
   }
 }
-double symetric_error(Mat_<double> M, Point2f X1, Point2f X2){
+double symetric_error(const Mat_<double> M, const Point2f X1, const Point2f X2){
   Point2f p= M*X1-X2;
   //cout<<"X1:"<<X1<<endl<<"X2:"<<X2<<endl;
   //cout<<"HX1:"<<M*X1<<endl;
   Point2f p2= M.inv()*X2-X1;
   return sqrt(p.x*p.x + p.y*p.y) + sqrt(p2.x*p2.x + p2.y*p2.y);
 }
-int homography(vector<int> index, vector<DMatch> good_matches, 
-	       vector<KeyPoint> keypoints_1, vector<KeyPoint> keypoints_2, Mat &H ){
+double homography(vector<int> index, const vector<DMatch> good_matches, 
+	       const vector<KeyPoint> keypoints_1, const vector<KeyPoint> keypoints_2, Mat &H ){
   
   
   Mat_<double> A(index.size()*2, 9);// matrix to solve
@@ -104,7 +104,7 @@ int homography(vector<int> index, vector<DMatch> good_matches,
   //centroid for matrix T and T'
   Point2f c(0,0);
   Point2f cp(0,0);
-  
+    
   for(unsigned int i=0;i<index.size();i++){
     int b = index[i];
     DMatch match = good_matches[b];
@@ -112,7 +112,6 @@ int homography(vector<int> index, vector<DMatch> good_matches,
     int trainIdx = match.trainIdx;
     KeyPoint xi = keypoints_1[queryIdx];
     KeyPoint xiprime = keypoints_2[trainIdx];
-    
     Point2f X = xi.pt;
     Point2f Xprime = xiprime.pt;
     list_X.push_back(X);
@@ -124,7 +123,7 @@ int homography(vector<int> index, vector<DMatch> good_matches,
     //Point2f test = xi.pt;
     //cout<<"point:" <<test<<endl;
   }
-
+  
 
   c = (1.0/N) * c;
   cp = (1.0/N) * cp;
@@ -157,7 +156,7 @@ int homography(vector<int> index, vector<DMatch> good_matches,
   Tp.at<double>(2,2)= 1;
   Tp.at<double>(0,2)=-cp.x/varp;  
   Tp.at<double>(1,2)= -cp.y/varp;
-  
+  //cout<<T<<endl;
   for (unsigned int i=0; i < index.size(); i++) {
     Point2f X = (list_X[i] - c)/var;
     Point2f Xprime = (list_Xp[i]-cp)/varp;
@@ -192,16 +191,31 @@ int homography(vector<int> index, vector<DMatch> good_matches,
   y = y.clone();
   H = y.reshape(0,3);
   H = Tp.inv()*H*T;
+  if(determinant(H)<0)
+    H = -H;
+  
   double scale = H.at<double>(2,2);
+  if(abs(scale) < EPS) return 0.0; 
   //cout<<"H"<<endl<<H<<endl<<endl;
   //cout<<"scale:"<<scale<<endl;
+  //if(determinant(H)<0) H = -H;
   H = H * (1.0/scale);
   
+  for(int j = 0; j<(int)list_X.size();j++){
+    Point2f X = list_X[j];
+    Point2f Xprime = list_Xp[j];
+    if(H.at<double>(2,0)*Xprime.x+ H.at<double>(2,1)*Xprime.y + H.at<double>(2,2) <= 0)
+      return 0.0;
+  }
+  
+  
+  //cout<<H<<endl;
+  //cout<<S<<endl;
   // *****to check the conditionning of h
   
   //cout<<S.at<double>(0,0)<<endl;
   //cout<<S.at<double>(S.rows-1,0)<<endl;
-  return 1;
+  return abs(determinant(H));
 }
 bool compareByDistance(const DMatch &a, const DMatch &b){
   return a.distance < b.distance;
@@ -248,18 +262,30 @@ int main(int argc, char *argv[]){
   // calcul homography 
   
   //init
-  int n_iter=100;
-  int reserve = n_iter/10;
   int n = (int) good_matches.size();
   int n_sample = 4;
+  vector<double> log_n;
+  vector<double> log_k;
+  
+  for(int k =0;k<=n;k++){
+    log_n.push_back(logCombi(n,k));
+    log_k.push_back(logCombi(k,n_sample));
+    //cout<<n<<endl;
+    }
+  
+
+  int n_iter=10000;
+  int reserve = n_iter/10;
+  
+  
   double minNFA= DBL_MAX-1;
   int bestk =1;
   Mat_<double> bestH(3,3);
   std::vector< int > inliers; // index of inlier in good match
-
+  high_resolution_clock::time_point t1 = high_resolution_clock::now();
   for(int i=0;i<n_iter;i++){
-    
     bool better = false;
+    //cout<<i<<" ";
   for(int j =0;j<1;j++){
     //1) draw 4 points
     vector<int> rand_sample;
@@ -267,32 +293,42 @@ int main(int argc, char *argv[]){
     vector<double> errors;
     Mat_<double> H(3,3);
     //2) homography estimation
-    int ratio = homography(rand_sample, good_matches, keypoints_1, keypoints_2, H);
-    // 3) calculation of errors for all points 
-    for(auto m : good_matches){
-      int queryIdx = m.queryIdx;
-      int trainIdx = m.trainIdx;
-      Point2f pt = keypoints_1[queryIdx].pt;
-      Point2f pt2 = keypoints_2[trainIdx].pt;
-      //cout<<H<<endl;
-      errors.push_back(symetric_error(H, pt, pt2));
-      //cout<<"error :"<< symetric_error(H, pt, pt2)<<endl;
+    double ratio = homography(rand_sample, good_matches, keypoints_1, keypoints_2, H);
+    //cout<<ratio<<endl;
+        // 3) calculation of errors for all points 
+    
+    if(ratio >= 0.1){
+      for(auto m : good_matches){
+	int queryIdx = m.queryIdx;
+	int trainIdx = m.trainIdx;
+	Point2f pt = keypoints_1[queryIdx].pt;
+	Point2f pt2 = keypoints_2[trainIdx].pt;
+	//cout<<H<<endl;
+	errors.push_back(symetric_error(H, pt, pt2));
+	//cout<<"error :"<< symetric_error(H, pt, pt2)<<endl;
       
+      }
+    
+
+      //4) sorting the error keep track of indexes of the matches
+      vector<int> index_match = argsort(errors);
+      sort(errors.begin(), errors.end());
+      //5) calculation of the best NFA for this homography
+      double nfa;
+      int k;
+      double alpha0 = M_PI/(input.rows*input.cols);
+      //cout<<"ww"<<endl;
+      bestNFA(log_n, log_k, errors, n, n_sample, alpha0,nfa, k);
+      if (nfa < minNFA) {
+	minNFA = nfa;
+	inliers.clear();
+	inliers.assign(index_match.begin(), index_match.begin()+k);
+	
+	bestH = H;
+	better = true;
+      }
     }
-    //4) sorting the error keep track of indexes of the matches
-    vector<int> index_match = argsort(errors);
-    sort(errors.begin(), errors.end());
-    //5) calculation of the best NFA for this homography
-    double nfa;
-    int k;
-    double alpha0 = M_PI/(input.rows*input.cols);
-    bestNFA(errors, n, n_sample, alpha0,nfa, k);
-    if (nfa < minNFA) {
-      minNFA = nfa;
-      inliers = index_match;
-      bestH = H;
-      better = true;
-    }
+    
   }
   if((better && minNFA<0)|| (i ==n_iter-1 && reserve)) {
       vector<DMatch> better_good_matches;
@@ -306,13 +342,19 @@ int main(int argc, char *argv[]){
       }
     }
   }
+  high_resolution_clock::time_point t2 = high_resolution_clock::now();
+  auto duration = duration_cast<microseconds>( t2 - t1 ).count();
+  cout << duration<<endl;
   std::cout<<"H :"<<bestH<<endl;
   cout<<"NFA:"<<minNFA<<endl;
+  cout<<"number of inliers : "<<inliers.size()<<endl;
+
   //creation of matrix
   
   
     // Add results to image and save.
-  //cv::Mat output;
+  cv::Mat output;
+  cv::warpPerspective(input, output, bestH, input.size(),INTER_LINEAR);
   //cv::drawKeypoints(input, keypoints_1, output);
-  //cv::imwrite("sift_result.jpg", output);
+  cv::imwrite("sift_result.jpg", output);
 }
