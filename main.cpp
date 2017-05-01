@@ -14,23 +14,24 @@ void displayDft(Mat img);
 
 int main(int argc, char *argv[])
 {
-  if(argc != 2){
-    printf("mauvaise entrée\n");
+  if(argc != 3){
+    printf("wrong usage : ./main <common_part_of_filenames> <extension>\n");
     return -1;
   }
   vector<Mat> v;//blurred images
   int id =1;
   string name = string(argv[1]);
+  string ext = string(argv[2]);
   Mat img;
 
   do{
-    img = imread(name+std::to_string(id)+".jpg"
+    img = imread(name+std::to_string(id)+"."+ext
 		 , 0);
     if(!img.empty())
       v.push_back(img);
     id++;
 
-  }while(!img.empty());
+  } while(!img.empty());
 
   if(v.size() == 0){
     printf("Error : fichier non valide\n");
