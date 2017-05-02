@@ -27,19 +27,21 @@ du mouvement.
 \section{Approche de l'article}
 \paragraph{}
 Le mouvement de l'appareil durant la prise de vue peut-être modélisé par une convolution de l'image
-par un noyau de flou. L'approche utilisée ici consiste à prendre une rafale d'images au lieu 
-d'une seule, puis à les combiner pour éliminer ce flou. En effet, la direction du mouvement est 
-aléatoire d'une image à l'autre et on veut donc récupérer l'information que contient chaque image
-pour obtenir une image nette. Cette technique permet même de débruiter l'image selon les
-auteurs. Pour ce faire l'article propose de calculer une moyenne pondérée de leurs transformées 
-de Fourier. 
-
-\paragraph{}
-L'avantage principal de cette méthode est qu'elle ne demande pas d'estimation explicite du noyau 
-de flou. 
-\\
-\\
-A compléter
+par un noyau de flou. la direction du mouvement est aléatoire d'une image à l'autre et on veut donc 
+récupérer l'information que contient chaque image pour obtenir une image nette. L'approche utilisée 
+ici consiste à prendre une rafale d'images au lieu d'une seule, puis à les combiner pour éliminer ce 
+flou. Cette technique permet même de débruiter l'image. Pour une séquence de M images on a :
+\[
+  v_{i} = u_{i} \ast k_{i} + n{i}
+\]
+Pour ce faire l'article propose de calculer une moyenne pondérée de leurs transformées 
+de Fourier pour éviter d'avoir à faire une estimation explicite du noyau de flou.
+\[
+  u_{p}(x) = \mathcal{F}^{-1}\left(\sum_{i=1}^M w_{i}(\zeta)\cdot \hat{v_{i}}(\zeta)\right)(x)
+\]
+\[
+  w_{i}(\zeta) = \frac{|\hat{v_{i}}(\zeta)|^p}{\sum_{j=1}^M |\hat{v_{j}}(\zeta)|^p}
+\]
 
 \section{Notre implémentation}
 \paragraph{}
@@ -47,16 +49,11 @@ A compléter : explications sur ce qu'on a fait
 
 \section{Nos résultats}
 \paragraph{}
-A compléter : illustrations de nos tests et résultats..
+A compléter : illustrations de nos tests et résultats
 
 \section{Analyse et Commentaires}
 \paragraph{}
 A compléter : analyse de la méthode, points forts / faibles, limites et améliorations possibles
-
-
-
-
-\begin{abstract}
-\end{abstract}
+Pb : recalage d'images floues.. ? tester les limites
 
 \end{document}          
