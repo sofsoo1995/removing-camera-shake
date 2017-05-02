@@ -5,7 +5,7 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/core/core.hpp"
-
+#include "sift/matcher_simple.hpp"
 using namespace cv;
 using namespace std;
 
@@ -42,7 +42,16 @@ int main(int argc, char *argv[])
 
   namedWindow("resultat",CV_WINDOW_AUTOSIZE);
   Mat u;
-  deblur(v, 12, &u);
+  int n_iter = 1000;
+  //recalage
+  vector<Mat> recaled;
+  
+  for(auto im : v){
+    Mat output;
+    recalage(im, v[0], output, n_iter);
+    recaled.push_back(output);
+  }
+  deblur(recaled, 12, &u);
 
   //imshow("resultat", u);
   imshow("image", v[0]);
