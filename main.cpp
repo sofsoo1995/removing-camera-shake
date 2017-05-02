@@ -10,7 +10,7 @@ using namespace cv;
 using namespace std;
 
 void deblur(vector<Mat> v, int p, Mat * res);
-void displayDft(Mat img);
+void displayDft(Mat img, Mat &magI);
 
 int main(int argc, char *argv[])
 {
@@ -54,10 +54,15 @@ int main(int argc, char *argv[])
   deblur(recaled, 12, &u);
 
   //imshow("resultat", u);
-  imshow("image", v[0]);
-  displayDft(v[0]);
-  waitKey(0);
-  destroyWindow("resultat");
+  for(int i =0; i<(int)v.size(); i++){
+    Mat imfft;
+    displayDft(v[i], imfft);
+    string title = "dft"+to_string(i)+".jpg";
+    imwrite(title, imfft);
+  }
+  
+  //waitKey(0);
+  //destroyWindow("resultat");
 
   return 0;
 }
@@ -74,7 +79,7 @@ void deblur(vector<Mat> list_vec, int p, Mat * res){
   merge(planes, 2, up);
   for(unsigned int i =0; i<list_vec.size() ; i++){
     //dft of v[i]
-    Mat planes[] = {Mat_<float>(list_vec[i]), Mat::zeros(list_vec[i].size(), CV_32F)};
+    Mat planes[] = {Mat_<double>(list_vec[i]), Mat::zeros(list_vec[i].size(), CV_32F)};
 
     merge(planes, 2, vi_fft);
     cv::dft(vi_fft, vi_fft);
@@ -93,7 +98,7 @@ void deblur(vector<Mat> list_vec, int p, Mat * res){
     cv::minMaxLoc(wi,NULL,&maxim,NULL,NULL);
     cv::addWeighted(wi,1/maxim,wi,1/maxim,0,wi);
     cv::pow(wi, p, wip);//wip =|vi|^p
-    cout<<wip.at<float>(100, 200)<<endl;
+    cout<<wip.at<double>(100, 200)<<endl;
     cv::multiply(wip,planes[0],planes[0]);
     cv::multiply(wip,planes[1],planes[1]);// wip_comp = vi * |vi|^p
     merge(planes, 2, vi_fft);
@@ -108,12 +113,16 @@ void deblur(vector<Mat> list_vec, int p, Mat * res){
 
   idft(up,*res,DFT_SCALE | DFT_REAL_OUTPUT);
   res -> convertTo(*res, CV_8U);
-  imshow("resultat", *res);
-
+  imwrite("resultat.jpg", *res);
+  Mat imfft;
+  displayDft(*res, imfft);
+  imwrite("fftRes.png", imfft);
+  
+  
 }
 
 
-void displayDft(Mat img){
+void displayDft(Mat img, Mat &magI){
   Mat complexI;
   Mat realI;
   Mat planes[] = {Mat_<float>(img), Mat::zeros(img.size(), CV_32F)};
@@ -121,7 +130,7 @@ void displayDft(Mat img){
   cv::dft(complexI,complexI);
   split(complexI, planes);                   // planes[0] = Re(DFT(I), planes[1] = Im(DFT(I))
   magnitude(planes[0], planes[1], planes[0]);// planes[0] = magnitude
-  Mat magI = planes[0];
+  magI = planes[0];
 
   magI += Scalar::all(1);                    // switch to logarithmic scale
   log(magI, magI);
@@ -150,8 +159,10 @@ void displayDft(Mat img){
   idft(complexI,realI,DFT_SCALE | DFT_REAL_OUTPUT);
   realI.convertTo(realI, CV_8U);
   normalize(magI, magI, 0, 1, CV_MINMAX);
-  imshow("spectrum magnitude", magI);
-  imshow("Reconstructed", realI);
+  magI.convertTo(magI, CV_8UC3, 255.0);
+  //magI.convertTo(magI, CV_8U);
+  //imshow("spectrum_magnitude", magI);
+  //imshow("Reconstructed", realI);
   waitKey();
 
 }
