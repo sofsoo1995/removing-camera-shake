@@ -10,6 +10,7 @@
 #include<cmath>
 #include<cfloat>
 #include <chrono>
+#include "matcher_simple.hpp"
 #define EPS 0.0001
 using namespace cv;
 using namespace std;
@@ -221,14 +222,10 @@ bool compareByDistance(const DMatch &a, const DMatch &b){
   return a.distance < b.distance;
 }
 
-int main(int argc, char *argv[]){
+int recalage(Mat input, Mat input2, Mat &output, int n_iter){
   Ptr<SIFT> f2d = SIFT::create(); 
-  if( argc != 4 ){ 
-   
-    return -1; 
-  }
-  Mat input = cv::imread(argv[1]); 
-  Mat input2 = cv::imread(argv[2]);
+  
+  
     if( !input.data || !input2.data ){ 
       std::cout<< " --(!) Error reading images " << std::endl; 
       return -1; 
@@ -243,12 +240,7 @@ int main(int argc, char *argv[]){
   FlannBasedMatcher matcher;
   std::vector<DMatch> matches;
   matcher.match(descriptor_1, descriptor_2, matches);
-  double max_dist = 0; double min_dist = 10000000;
-  for(int i = 0; i < descriptor_1.rows; i++ ){ 
-    double dist = matches[i].distance;
-    if( dist < min_dist ) min_dist = dist;
-    if( dist > max_dist ) max_dist = dist;
-  }
+  
   //we take the twenty best matches.
   std::sort(matches.begin(), matches.end(), compareByDistance);
   std::vector< DMatch > good_matches ;
@@ -258,7 +250,7 @@ int main(int argc, char *argv[]){
   drawMatches( input, keypoints_1, input2, keypoints_2,
                good_matches, img_matches, Scalar::all(-1), Scalar::all(-1),
                vector<char>(), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS );
-  cv::imwrite(argv[3], img_matches);
+  cv::imwrite("match.png", img_matches);
   // calcul homography 
   
   //init
@@ -274,7 +266,7 @@ int main(int argc, char *argv[]){
     }
   
 
-  int n_iter=10000;
+  
   int reserve = n_iter/10;
   
   
@@ -353,8 +345,8 @@ int main(int argc, char *argv[]){
   
   
     // Add results to image and save.
-  cv::Mat output;
+  output;
   cv::warpPerspective(input, output, bestH, input.size(),INTER_LINEAR);
   //cv::drawKeypoints(input, keypoints_1, output);
-  cv::imwrite("sift_result.jpg", output);
+  
 }

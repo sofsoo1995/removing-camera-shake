@@ -16,5 +16,5 @@ using namespace cv::xfeatures2d;
 double logCombi(int n,int k);
 double homography(vector<int> index, const vector<DMatch> good_matches, 
 		    const vector<KeyPoint> keypoints_1, const vector<KeyPoint> keypoints_2, Mat &H );
-int recalage(Mat input, Mat input2, Mat &output);
+int recalage(Mat input, Mat input2, Mat &output, int n_iter);
 #endif
