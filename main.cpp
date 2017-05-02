@@ -40,12 +40,12 @@ int main(int argc, char *argv[])
   }
 
 
-  namedWindow("resultat",CV_WINDOW_AUTOSIZE);
+  // namedWindow("resultat",CV_WINDOW_AUTOSIZE);
   Mat u;
   int n_iter = 1000;
   //recalage
   vector<Mat> recaled;
-  
+
   for(auto im : v){
     Mat output;
     recalage(im, v[0], output, n_iter);
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
     string title = "dft"+to_string(i)+".jpg";
     imwrite(title, imfft);
   }
-  
+
   //waitKey(0);
   //destroyWindow("resultat");
 
@@ -79,8 +79,7 @@ void deblur(vector<Mat> list_vec, int p, Mat * res){
   merge(planes, 2, up);
   for(unsigned int i =0; i<list_vec.size() ; i++){
     //dft of v[i]
-    Mat planes[] = {Mat_<double>(list_vec[i]), Mat::zeros(list_vec[i].size(), CV_32F)};
-
+    Mat planes[] = {Mat_<float>(list_vec[i]), Mat::zeros(list_vec[i].size(), CV_32F)};
     merge(planes, 2, vi_fft);
     cv::dft(vi_fft, vi_fft);
     cv::split(vi_fft, planes);
@@ -98,7 +97,7 @@ void deblur(vector<Mat> list_vec, int p, Mat * res){
     cv::minMaxLoc(wi,NULL,&maxim,NULL,NULL);
     cv::addWeighted(wi,1/maxim,wi,1/maxim,0,wi);
     cv::pow(wi, p, wip);//wip =|vi|^p
-    cout<<wip.at<double>(100, 200)<<endl;
+    cout<<wip.at<float>(100, 200)<<endl;
     cv::multiply(wip,planes[0],planes[0]);
     cv::multiply(wip,planes[1],planes[1]);// wip_comp = vi * |vi|^p
     merge(planes, 2, vi_fft);
@@ -113,12 +112,12 @@ void deblur(vector<Mat> list_vec, int p, Mat * res){
 
   idft(up,*res,DFT_SCALE | DFT_REAL_OUTPUT);
   res -> convertTo(*res, CV_8U);
-  imwrite("resultat.jpg", *res);
+  imwrite("resultat."+ext, *res);
   Mat imfft;
   displayDft(*res, imfft);
   imwrite("fftRes.png", imfft);
-  
-  
+
+
 }
 
 
