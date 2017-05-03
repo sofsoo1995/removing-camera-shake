@@ -115,7 +115,19 @@ On peut ensuite recaler les images sur elles même. Ensuite, on peut appliquer l
 \begin{algorithm}
  \SetKwInOut{Input}{input}
   \SetKwInOut{Output}{output}
-  \Input{Images recalées avec ORSA}
+  \Input{$N$ Images recalées avec ORSA $(v_i)_{i=1...N}$}
+  initialiser $u_p$ \;
+  $w=0$\;
+  
+  \For{i in 1...$N$}{
+    $\hat{v_i} = \mathbf{FFT}(v_i)$\;
+    $w_i= \frac{1}{c}\sum_{j=1}^c |\hat{v_{j}}^c|$ \it{pour la couleur} \;
+    $w_i = \mathbf{G}_{\sigma}w_i$\; 
+    $\hat{u_p}=\hat{u_p}+w_i^p \hat{v_i}$\;
+    $w = w + w_i^p$\;
+  }
+  $u_p = \mathbf{IFFT}{\frac{\hat{u_p}}{w}}$\;
+  \Output{$u_p$}
   
 \end{algorithm}
 
