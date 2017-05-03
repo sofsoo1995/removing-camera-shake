@@ -27,8 +27,7 @@ int main(int argc, char *argv[])
   Mat img;
 
   do{
-    img = imread(name+std::to_string(id)+"."+ext
-		 , 0);
+    img = imread(name+std::to_string(id)+"."+ext, IMREAD_GRAYSCALE);
     if(!img.empty())
       v.push_back(img);
     id++;
@@ -50,12 +49,16 @@ int main(int argc, char *argv[])
   vector<Mat> recaled;
   recaled.push_back(v[0]);
   for(int i=1; i<(int)v.size();i++){
-    Mat output;
-    nbinliers= recalage(v[i], v[0], output, n_iter);
-    // on rejette l'image si le risque de mauvais recalage est trop fort.
-    if (nbinliers>200) recaled.push_back(output);
+    // Mat output;
+    // nbinliers= recalage(v[i], v[0], output, n_iter);
+    // // on rejette l'image si le risque de mauvais recalage est trop fort.
+    // if (nbinliers>200) recaled.push_back(output);
+
+    /*** la ligne suivante sert a ignorer le recalage. il faut alors **********
+    **** la decommenter et commenter les lignes precedentes dans la boucle ***/
+    recaled.push_back(v[i]);
   }
-  deblur(recaled, 12, &u);
+  deblur(recaled, 6, &u);
 
   //imshow("resultat", u);
   for(int i =0; i<(int)v.size(); i++){
@@ -63,7 +66,6 @@ int main(int argc, char *argv[])
     displayDft(v[i], imfft);
     string title = name+"dft"+to_string(i)+"."+ext;
     imwrite(title, imfft);
-    cout << title<<endl;
   }
 
   //waitKey(0);
