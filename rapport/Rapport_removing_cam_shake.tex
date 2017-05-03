@@ -3,6 +3,7 @@
 \usepackage{graphicx}
 \usepackage{subcaption}
 \usepackage{wrapfig}
+
 \newcommand{\comments}[1]{}
 
 % Title Page
@@ -14,6 +15,7 @@ Removing Camera Shake via Weighted Fourier Burst Accumulation}
 
 \begin{document}
 \maketitle
+
 
 % pour éviter d'avoir la numérotation 0.1 0.2 etc avant les sections
 \setcounter{secnumdepth}{0}
@@ -162,7 +164,13 @@ page~\pageref{fig:anthro})
 
 \subsection{Influence des paramètres}
 \paragraph{}
-Le paramètre p permet de doser --- A COMPLETER --- voir figure~\ref{fig:param_p} page~\pageref{fig:param_p}.
+On observe que le paramètre \(p\) a une grande influence sur la qualité du résultat (voir
+figure~\ref{fig:param_p} page~\pageref{fig:param_p}).
+Le choix de \(p\) correspond à un compromis entre le biais et la variance du résultat. 
+Lorsque \(p\) est proche de 1, on obtient une image peu bruitée mais avec un biais fort : la valeur 
+de fréquence choisies tient plus compte des différentes images.
+Au contraire avec une grande valeur de \(p\) le biais est plus faible mais la variance augmente,
+puisqu'on sélectionne la valeur maximale de la fréquence parmi les différentes images.
 
 
 \begin{figure}[h]
