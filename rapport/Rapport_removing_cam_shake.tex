@@ -3,8 +3,12 @@
 \usepackage{graphicx}
 \usepackage{subcaption}
 \usepackage{wrapfig}
+\usepackage{amsmath}
+\usepackage[]{algorithm2e}
+
 
 \newcommand{\comments}[1]{}
+
 
 % Title Page
 \title{Implémentation d'article de recherche \\ 
@@ -67,17 +71,63 @@ cela revient à prendre pour chaque fréquence la maximale qu'elle atteint dans 
 Nous avons travaillé en C++ avec la librairie OpenCV.
 \paragraph{}
 Nous avons d'abord implémenté la méthode de l'article sur des images supposées bien recalées, puis
-nous avons implémenté l'algorithme ORSA pour le recalage des images. 
-Nous n'avons pas implémenté la détection des homographies dégénérées.
+nous avons implémenté l'algorithme ORSA(Optimized RANSAC) pour le recalage des images.
+L'avantage de cette méthode est que contrairement à RANSAC, il n'y a aucun
+paramètre à fixer. L'algorithme est automatique. Le principe est de trouver 
+pour chaque homographie, le Nombre de Fausse Alarme(NFA) minimum. Le 
+NFA est définie  :
 \\\\
-Rappeler formules ORSA
+$$
+\mathbf{NFA}(k) = (n-N_{sample})\binom{n}{k}\binom{k}{N_{sample}}(\epsilon_k^2 \alpha_0)^{k-N_{sample}}
+$$
+où $n$ est le nombre de match, $k$ est le nombre d'inlier $\epsilon_k$ est la kieme plus petite erreur. et $\alpha_0$ est la probabilité
+d'avoir une erreur de moins de un pixel. Nous avons pris $N_{sample}=4$.
+Voici le pseudo-code du recalage:\\
+\begin{algorithm}[H]
+ \SetKwInOut{Input}{input}
+  \SetKwInOut{Output}{output}
+  \Input{2 images non recalés, niter}
+   Calcul du SIFT sur les deux images\;
+   Recherche des Matches avec l'algorithme Flann(plus proche voisin)\;
+   bestNFA = $\infty$\;
+   inliers = $\emptyset$\;
+   bestH = I\;
+    \For{i allant de 1 à niter}{
+	tirer $N_{sample}$ matches de manières aléatoire\;
+	calcul de l'homographie H\;
+	\uIf{l'homographie n'est pas dégénéré(bien conditionné)}{
+	calcul des erreurs ($\epsilon_k$) pour chaque match\footnote{utilisation de la distance symétrique. pour un match$(x_i,x'_i)$ et $H$ une homographie, on calcule l'erreur e
+	 $e= d(Hx_i,x'_i)+d(H^{-1}x'_i,x_i)$}\;
+	 on trie les ($\epsilon_k$)\;
+	 on calcule $NFA(k*) = \min_k (NFA(k))$\;
+	 
+	 inliers = les $k*$ premiers inliers\;
+	 \uIf{bestNFA plus grand que $NFA(k*)$}{
+	 bestNFA=$NFA(k*)$\;
+	 bestH = H\;
+	 }
+	}
+	\Output{bestH}
+     }
+\end{algorithm}
+
+On peut ensuite recaler les images sur elles même. Ensuite, on peut appliquer le défloutage.
+\begin{algorithm}
+ \SetKwInOut{Input}{input}
+  \SetKwInOut{Output}{output}
+  \Input{Images recalées avec ORSA}
+  
+\end{algorithm}
+
+
+
 
 \section{Nos résultats}
 
 \subsection{Images déjà recalées}
-Nous avons d'abord testé la méthode sur des images déjà recalées que nous avons crées
-nous même en convoluant une image avec différents noyaux de flous correspondant pour simuler 
-le mouvement de l'appareil. Dans la figure~\ref{fig:arctriomphe}
+Nous avons d'abord testé la méthode sur des images déjà recalées : 
+les images anthropologies utilisées dans l'articles ainsi que d'autres que nous avons faites 
+nous même avec des noyaus de flous correspondant à un mouvement linéaire. Dans la figure~\ref{fig:arctriomphe}
 (page~\pageref{fig:arctriomphe}) on peut comparer le résultat obtenu à
 l'image originale utilisée et à la meilleure des images floues.
 
@@ -167,6 +217,7 @@ page~\pageref{fig:anthro})
 \label{fig:anthro}
 \end{figure}
 
+
 \subsection{Influence des paramètres}
 \paragraph{}
 On observe que le paramètre \(p\) a une grande influence sur la qualité du résultat (voir
@@ -223,7 +274,9 @@ Mettre une image d'orsa avec inliers
 Dans la phase de recalage, le nombre d'iteration utilisé joue un rôle très important. Comme on le voit sur 
 la figure~\ref{fig:nb_iter} (page~\pageref{fig:nb_iter}), en doublant le nombre d'itérations on obtient un 
 recalage plus fin qui permet un meilleur résultat. En effet la moindre erreur de recalage (quelques pixels) 
-se traduit par des artefacts dus à des effets de déphasage (Figure~\ref{fig:detail1000iter} page~\pageref{fig:1000iter}). 
+se traduit par des artefacts dus à des effets de déphasage (Figure~\ref{fig:detail1000iter} page~\pageref{fig:1000iter}).
+\\\\
+Faire un test woods avec recalage. 
 
 
 \begin{figure}[h]
@@ -257,7 +310,7 @@ se traduit par des artefacts dus à des effets de déphasage (Figure~\ref{fig:de
 \paragraph{}
 La méthode proposée par l'article donne de bons résultats dans le cas d'images bien recalées. Elle est très 
 robuste au bruit et à des noyaux de flous relativement grands (jusqu'à 5 pixels), pas nécessairement en
-mouvement rectiligne. Cependant il y a quelques points qui peuvent poser problème.
+mouvement rectiligne. Cependant il y a quelques poins qui peuvent poser problème.
 
 \subsection{Recalage des images}
 
@@ -281,10 +334,11 @@ Nous sommes bien sûr conscient qu'un meilleur critère devrait être utilisé.
 \paragraph{}
 La phase de recalage peut prendre beaucoup de temps, mais est extrêmement importante pour avoir de bons résultats.
 Sur nos exemples il est nécessaire d'avoir au moins 2000 iterations dans l'algorithme ORSA pour obtenir un 
-recalage satisfaisant et dans certains cas le recalage échoue lorsque les images sont trop floues.
+recalage satisfaisant. 
 L'article évite cette question en supposant que le recalage est fait immédiatement grâce aux gyroscopes
 des smartphones, mais cela peut constituer une limite à l'application de la méthode en temps réel dans 
-d'autres appareils. Et effectivement si on se restreint à ce cas d'application on a une méthode rapide et efficace.
+d'autres appareils. Cependant on peut imaginer que se problème se règle avec l'augmentation des capacité de calcul 
+des appareils.
 
 \subsection{Flou non homogène : mouvement rotatif}
 \paragraph{}
