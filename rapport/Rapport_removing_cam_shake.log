@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2017.5.3)  3 MAY 2017 23:12
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2017.5.3)  3 MAY 2017 23:14
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -424,18 +424,18 @@ LaTeX Warning: Label `sub@fig:Bestflou' multiply defined.
 )
 \openout1 = `Rapport_removing_cam_shake.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
  (/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count109
@@ -504,12 +504,23 @@ Package caption Info: End \AtBeginDocument code.
 [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-Underfull \hbox (badness 10000) in paragraph at lines 66--73
+Overfull \hbox (12.20897pt too wide) in paragraph at lines 30--32
+\OT1/cmr/m/n/10 Weighted Fourier Burst Ac-cu-mu-la-tion pro-pos^^Se par Mauri-c
+io Del-bra-cio et Guillermo
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 30--32
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 66--73
+Underfull \hbox (badness 10000) in paragraph at lines 73--80
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 73--80
 
  []
 
@@ -517,148 +528,231 @@ Underfull \hbox (badness 10000) in paragraph at lines 66--73
 File: ressource/detail_flou1.png Graphic file (type png)
 
 <use ressource/detail_flou1.png>
-Package pdftex.def Info: ressource/detail_flou1.png used on input line 130.
+Package pdftex.def Info: ressource/detail_flou1.png used on input line 137.
 (pdftex.def)             Requested size: 74.5212pt x 55.62436pt.
 
 <ressource/detail_flou2.png, id=20, 640.3925pt x 478.78876pt>
 File: ressource/detail_flou2.png Graphic file (type png)
 
 <use ressource/detail_flou2.png>
-Package pdftex.def Info: ressource/detail_flou2.png used on input line 135.
+Package pdftex.def Info: ressource/detail_flou2.png used on input line 142.
 (pdftex.def)             Requested size: 74.5212pt x 55.71341pt.
 
 <ressource/detail_flou3.png, id=21, 640.3925pt x 476.78125pt>
 File: ressource/detail_flou3.png Graphic file (type png)
 
 <use ressource/detail_flou3.png>
-Package pdftex.def Info: ressource/detail_flou3.png used on input line 140.
+Package pdftex.def Info: ressource/detail_flou3.png used on input line 147.
 (pdftex.def)             Requested size: 74.5212pt x 55.4798pt.
 
 <ressource/detail_flou4.png, id=22, 639.38875pt x 479.7925pt>
 File: ressource/detail_flou4.png Graphic file (type png)
 
 <use ressource/detail_flou4.png>
-Package pdftex.def Info: ressource/detail_flou4.png used on input line 145.
+Package pdftex.def Info: ressource/detail_flou4.png used on input line 152.
 (pdftex.def)             Requested size: 74.5212pt x 55.91805pt.
 
 <ressource/detail_orig.png, id=23, 634.37pt x 478.78876pt>
 File: ressource/detail_orig.png Graphic file (type png)
 
 <use ressource/detail_orig.png>
-Package pdftex.def Info: ressource/detail_orig.png used on input line 150.
+Package pdftex.def Info: ressource/detail_orig.png used on input line 157.
 (pdftex.def)             Requested size: 99.36159pt x 74.98589pt.
 
 <ressource/detail_result.png, id=24, 641.39626pt x 479.7925pt>
 File: ressource/detail_result.png Graphic file (type png)
 
 <use ressource/detail_result.png>
-Package pdftex.def Info: ressource/detail_result.png used on input line 155.
+Package pdftex.def Info: ressource/detail_result.png used on input line 162.
 (pdftex.def)             Requested size: 99.36159pt x 74.32314pt.
 File: ressource/detail_flou1.png Graphic file (type png)
  <use ressource/detail_flou1.png>
-Package pdftex.def Info: ressource/detail_flou1.png used on input line 160.
+Package pdftex.def Info: ressource/detail_flou1.png used on input line 167.
 (pdftex.def)             Requested size: 99.36159pt x 74.1658pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<ressource/flouresultat_p1.png, id=25, 652.4375pt x 489.83pt>
-File: ressource/flouresultat_p1.png Graphic file (type png)
+[2]
 
-<use ressource/flouresultat_p1.png>
-Package pdftex.def Info: ressource/flouresultat_p1.png used on input line 182.
-(pdftex.def)             Requested size: 109.2991pt x 82.05917pt.
+LaTeX Warning: Reference `fig:anthro' on page 3 undefined on input line 182.
 
-<ressource/flouresultat_p6.png, id=26, 652.4375pt x 489.83pt>
-File: ressource/flouresultat_p6.png Graphic file (type png)
 
-<use ressource/flouresultat_p6.png>
-Package pdftex.def Info: ressource/flouresultat_p6.png used on input line 187.
-(pdftex.def)             Requested size: 109.2991pt x 82.05917pt.
+LaTeX Warning: Reference `fig:anthro' on page 3 undefined on input line 183.
 
-<ressource/flouresultat_p12.png, id=27, 652.4375pt x 489.83pt>
-File: ressource/flouresultat_p12.png Graphic file (type png)
+<ressource/detail_anthro1.png, id=37, 970.62625pt x 706.64pt>
+File: ressource/detail_anthro1.png Graphic file (type png)
 
-<use ressource/flouresultat_p12.png>
-Package pdftex.def Info: ressource/flouresultat_p12.png used on input line 192.
+<use ressource/detail_anthro1.png>
+Package pdftex.def Info: ressource/detail_anthro1.png used on input line 189.
+(pdftex.def)             Requested size: 99.36159pt x 72.32863pt.
 
-(pdftex.def)             Requested size: 109.2991pt x 82.05917pt.
+<ressource/detail_anthro3.png, id=38, 971.63pt x 710.655pt>
+File: ressource/detail_anthro3.png Graphic file (type png)
 
-<ressource/diffp1stretch.png, id=28, 652.4375pt x 489.83pt>
-File: ressource/diffp1stretch.png Graphic file (type png)
+<use ressource/detail_anthro3.png>
+Package pdftex.def Info: ressource/detail_anthro3.png used on input line 193.
+(pdftex.def)             Requested size: 99.36159pt x 72.66368pt.
 
-<use ressource/diffp1stretch.png>
-Package pdftex.def Info: ressource/diffp1stretch.png used on input line 197.
-(pdftex.def)             Requested size: 109.2991pt x 82.05917pt.
+<ressource/detail_anthro_res.png, id=39, 972.63374pt x 709.65125pt>
+File: ressource/detail_anthro_res.png Graphic file (type png)
 
-<ressource/diffp6stretch.png, id=29, 652.4375pt x 489.83pt>
-File: ressource/diffp6stretch.png Graphic file (type png)
+<use ressource/detail_anthro_res.png>
+Package pdftex.def Info: ressource/detail_anthro_res.png used on input line 197
+.
+(pdftex.def)             Requested size: 99.36159pt x 72.49608pt.
 
-<use ressource/diffp6stretch.png>
-Package pdftex.def Info: ressource/diffp6stretch.png used on input line 202.
-(pdftex.def)             Requested size: 109.2991pt x 82.05917pt.
 
-<ressource/diffp12stretch.png, id=30, 652.4375pt x 489.83pt>
-File: ressource/diffp12stretch.png Graphic file (type png)
+LaTeX Warning: File `ressource/detail_fire1.png' not found on input line 201.
 
-<use ressource/diffp12stretch.png>
-Package pdftex.def Info: ressource/diffp12stretch.png used on input line 207.
-(pdftex.def)             Requested size: 109.2991pt x 82.05917pt.
- [2]
-Underfull \hbox (badness 10000) in paragraph at lines 221--227
 
- []
+! Package pdftex.def Error: File `ressource/detail_fire1.png' not found.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.201 ....9\linewidth]{ressource/detail_fire1.png}
+                                                  
+Using draft setting for this image.
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+LaTeX Warning: File `ressource/detail_fire3.png' not found on input line 206.
+
+
+! Package pdftex.def Error: File `ressource/detail_fire3.png' not found.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.206 ....9\linewidth]{ressource/detail_fire3.png}
+                                                  
+Using draft setting for this image.
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+LaTeX Warning: File `ressource/detail_fire_res.png' not found on input line 211
+.
+
+
+! Package pdftex.def Error: File `ressource/detail_fire_res.png' not found.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.211 ...linewidth]{ressource/detail_fire_res.png}
+                                                  
+Using draft setting for this image.
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
 
 [3 <./ressource/detail_flou1.png> <./ressource/detail_flou2.png> <./ressource/d
 etail_flou3.png> <./ressource/detail_flou4.png> <./ressource/detail_orig.png> <
-./ressource/detail_result.png> <./ressource/flouresultat_p1.png (PNG copy)> <./
-ressource/flouresultat_p6.png (PNG copy)> <./ressource/flouresultat_p12.png (PN
-G copy)> <./ressource/diffp1stretch.png (PNG copy)> <./ressource/diffp6stretch.
-png (PNG copy)> <./ressource/diffp12stretch.png (PNG copy)>]
-<ressource/arc_result_1000iter.png, id=49, 652.4375pt x 489.83pt>
+./ressource/detail_result.png> <./ressource/detail_anthro1.png> <./ressource/de
+tail_anthro3.png> <./ressource/detail_anthro_res.png>]
+<ressource/flouresultat_p1.png, id=45, 652.4375pt x 489.83pt>
+File: ressource/flouresultat_p1.png Graphic file (type png)
+
+<use ressource/flouresultat_p1.png>
+Package pdftex.def Info: ressource/flouresultat_p1.png used on input line 235.
+(pdftex.def)             Requested size: 109.2991pt x 82.05917pt.
+
+<ressource/flouresultat_p6.png, id=46, 652.4375pt x 489.83pt>
+File: ressource/flouresultat_p6.png Graphic file (type png)
+
+<use ressource/flouresultat_p6.png>
+Package pdftex.def Info: ressource/flouresultat_p6.png used on input line 240.
+(pdftex.def)             Requested size: 109.2991pt x 82.05917pt.
+
+<ressource/flouresultat_p12.png, id=47, 652.4375pt x 489.83pt>
+File: ressource/flouresultat_p12.png Graphic file (type png)
+
+<use ressource/flouresultat_p12.png>
+Package pdftex.def Info: ressource/flouresultat_p12.png used on input line 245.
+
+(pdftex.def)             Requested size: 109.2991pt x 82.05917pt.
+
+<ressource/diffp1stretch.png, id=48, 652.4375pt x 489.83pt>
+File: ressource/diffp1stretch.png Graphic file (type png)
+
+<use ressource/diffp1stretch.png>
+Package pdftex.def Info: ressource/diffp1stretch.png used on input line 250.
+(pdftex.def)             Requested size: 109.2991pt x 82.05917pt.
+
+<ressource/diffp6stretch.png, id=49, 652.4375pt x 489.83pt>
+File: ressource/diffp6stretch.png Graphic file (type png)
+
+<use ressource/diffp6stretch.png>
+Package pdftex.def Info: ressource/diffp6stretch.png used on input line 255.
+(pdftex.def)             Requested size: 109.2991pt x 82.05917pt.
+
+<ressource/diffp12stretch.png, id=50, 652.4375pt x 489.83pt>
+File: ressource/diffp12stretch.png Graphic file (type png)
+
+<use ressource/diffp12stretch.png>
+Package pdftex.def Info: ressource/diffp12stretch.png used on input line 260.
+(pdftex.def)             Requested size: 109.2991pt x 82.05917pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 274--280
+
+ []
+
+<ressource/arc_result_1000iter.png, id=51, 652.4375pt x 489.83pt>
 File: ressource/arc_result_1000iter.png Graphic file (type png)
 
 <use ressource/arc_result_1000iter.png>
 Package pdftex.def Info: ressource/arc_result_1000iter.png used on input line 2
-32.
+85.
 (pdftex.def)             Requested size: 170.77594pt x 128.21233pt.
 
-<ressource/arc_result_2000iter.png, id=50, 652.4375pt x 489.83pt>
+<ressource/arc_result_2000iter.png, id=52, 652.4375pt x 489.83pt>
 File: ressource/arc_result_2000iter.png Graphic file (type png)
 
 <use ressource/arc_result_2000iter.png>
 Package pdftex.def Info: ressource/arc_result_2000iter.png used on input line 2
-37.
+90.
 (pdftex.def)             Requested size: 170.77594pt x 128.21233pt.
 
-<ressource/detail_1000iter.png, id=51, 634.37pt x 474.77374pt>
+<ressource/detail_1000iter.png, id=53, 634.37pt x 474.77374pt>
 File: ressource/detail_1000iter.png Graphic file (type png)
 
 <use ressource/detail_1000iter.png>
-Package pdftex.def Info: ressource/detail_1000iter.png used on input line 242.
+Package pdftex.def Info: ressource/detail_1000iter.png used on input line 295.
 (pdftex.def)             Requested size: 170.77594pt x 127.80666pt.
 
-<ressource/detail_2000iter.png, id=52, 636.3775pt x 475.7775pt>
+<ressource/detail_2000iter.png, id=54, 636.3775pt x 475.7775pt>
 File: ressource/detail_2000iter.png Graphic file (type png)
 
 <use ressource/detail_2000iter.png>
-Package pdftex.def Info: ressource/detail_2000iter.png used on input line 247.
+Package pdftex.def Info: ressource/detail_2000iter.png used on input line 300.
 (pdftex.def)             Requested size: 170.77594pt x 127.67758pt.
 
-Overfull \hbox (2.22221pt too wide) in paragraph at lines 231--251
+Overfull \hbox (2.22221pt too wide) in paragraph at lines 284--304
 []$[]$ $[]$
  []
 
 
-Overfull \hbox (2.22221pt too wide) in paragraph at lines 231--251
+Overfull \hbox (2.22221pt too wide) in paragraph at lines 284--304
 []$ $[]$ 
  []
 
-<ressource/keyboardresultat.jpg, id=53, 3276.24pt x 2457.18pt>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[4 <./ressource/flouresultat_p1.png (PNG copy)> <./ressource/flouresultat_p6.pn
+g (PNG copy)> <./ressource/flouresultat_p12.png (PNG copy)> <./ressource/diffp1
+stretch.png (PNG copy)> <./ressource/diffp6stretch.png (PNG copy)> <./ressource
+/diffp12stretch.png (PNG copy)>]
+<ressource/keyboardresultat.jpg, id=60, 3276.24pt x 2457.18pt>
 File: ressource/keyboardresultat.jpg Graphic file (type jpg)
 
 <use ressource/keyboardresultat.jpg>
-Package pdftex.def Info: ressource/keyboardresultat.jpg used on input line 276.
+Package pdftex.def Info: ressource/keyboardresultat.jpg used on input line 329.
 
 (pdftex.def)             Requested size: 172.5pt x 129.35257pt.
 
@@ -666,46 +760,49 @@ Package pdftex.def Info: ressource/keyboardresultat.jpg used on input line 276.
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 
-Overfull \hbox (4.35243pt too wide) in paragraph at lines 282--289
+Overfull \hbox (4.35243pt too wide) in paragraph at lines 335--342
 \OT1/cmr/m/n/10 pareils. Cepen-dant on peut imag-iner que se probl^^Reme se r^^
 Regle avec l'augmentation
  []
 
-[4 <./ressource/arc_result_1000iter.png (PNG copy)> <./ressource/arc_result_200
+[5 <./ressource/arc_result_1000iter.png (PNG copy)> <./ressource/arc_result_200
 0iter.png (PNG copy)> <./ressource/detail_1000iter.png> <./ressource/detail_200
-0iter.png>] <ressource/flou_rot_10kit.jpg, id=57, 3276.24pt x 2457.18pt>
+0iter.png>] <ressource/flou_rot_10kit.jpg, id=64, 3276.24pt x 2457.18pt>
 File: ressource/flou_rot_10kit.jpg Graphic file (type jpg)
 
 <use ressource/flou_rot_10kit.jpg>
-Package pdftex.def Info: ressource/flou_rot_10kit.jpg used on input line 306.
+Package pdftex.def Info: ressource/flou_rot_10kit.jpg used on input line 359.
 (pdftex.def)             Requested size: 99.36159pt x 74.49957pt.
 
-<ressource/flou_rot_centre.png, id=58, 953.5625pt x 709.65125pt>
+<ressource/flou_rot_centre.png, id=65, 953.5625pt x 709.65125pt>
 File: ressource/flou_rot_centre.png Graphic file (type png)
 
 <use ressource/flou_rot_centre.png>
-Package pdftex.def Info: ressource/flou_rot_centre.png used on input line 311.
+Package pdftex.def Info: ressource/flou_rot_centre.png used on input line 364.
 (pdftex.def)             Requested size: 99.36159pt x 73.93625pt.
 
-<ressource/flou_rot_bottom.png, id=59, 947.54pt x 708.6475pt>
+<ressource/flou_rot_bottom.png, id=66, 947.54pt x 708.6475pt>
 File: ressource/flou_rot_bottom.png Graphic file (type png)
 
 <use ressource/flou_rot_bottom.png>
-Package pdftex.def Info: ressource/flou_rot_bottom.png used on input line 316.
+Package pdftex.def Info: ressource/flou_rot_bottom.png used on input line 369.
 (pdftex.def)             Requested size: 99.36159pt x 74.30745pt.
- [5 <./ressource/keyboardresultat.jpg> <./ressource/flou_rot_10kit.jpg> <./ress
+ [6 <./ressource/keyboardresultat.jpg> <./ressource/flou_rot_10kit.jpg> <./ress
 ource/flou_rot_centre.png> <./ressource/flou_rot_bottom.png>] (./Rapport_removi
 ng_cam_shake.aux)
+
+LaTeX Warning: There were undefined references.
+
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 5049 strings out of 493301
- 74465 string characters out of 6139834
- 164484 words of memory out of 5000000
- 8428 multiletter control sequences out of 15000+600000
- 12752 words of font info for 45 fonts, out of 8000000 for 9000
+ 5082 strings out of 493301
+ 75191 string characters out of 6139834
+ 162484 words of memory out of 5000000
+ 8454 multiletter control sequences out of 15000+600000
+ 12920 words of font info for 46 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
  42i,20n,40p,286b,462s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
@@ -728,11 +825,12 @@ type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texlive/texmf-dist/fonts/type1/p
 ublic/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/a
 msfonts/cm/cmsy9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts
 /cm/cmti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cm
-ti7.pfb>
-Output written on Rapport_removing_cam_shake.pdf (6 pages, 8490111 bytes).
+ti7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pf
+b>
+Output written on Rapport_removing_cam_shake.pdf (7 pages, 9480962 bytes).
 PDF statistics:
- 131 PDF objects out of 1000 (max. 8388607)
- 80 compressed objects within 1 object stream
+ 143 PDF objects out of 1000 (max. 8388607)
+ 87 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 101 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 116 words of extra memory for PDF output out of 10000 (max. 10000000)
 
