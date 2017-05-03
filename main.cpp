@@ -11,6 +11,8 @@ using namespace std;
 
 void deblur(vector<Mat> v, int p, Mat * res);
 void displayDft(Mat img, Mat &magI);
+string name;
+string ext;
 
 int main(int argc, char *argv[])
 {
@@ -20,8 +22,8 @@ int main(int argc, char *argv[])
   }
   vector<Mat> v;//blurred images
   int id =1;
-  string name = string(argv[1]);
-  string ext = string(argv[2]);
+  name = string(argv[1]);
+  ext = string(argv[2]);
   Mat img;
 
   do{
@@ -42,14 +44,16 @@ int main(int argc, char *argv[])
 
   // namedWindow("resultat",CV_WINDOW_AUTOSIZE);
   Mat u;
-  int n_iter = 1000;
+  int n_iter = 10000;
   //recalage
+  int nbinliers;
   vector<Mat> recaled;
-
-  for(auto im : v){
+  recaled.push_back(v[0]);
+  for(int i=1; i<(int)v.size();i++){
     Mat output;
-    recalage(im, v[0], output, n_iter);
-    recaled.push_back(output);
+    nbinliers= recalage(v[i], v[0], output, n_iter);
+    // on rejette l'image si le risque de mauvais recalage est trop fort.
+    if (nbinliers>200) recaled.push_back(output);
   }
   deblur(recaled, 12, &u);
 
@@ -57,8 +61,9 @@ int main(int argc, char *argv[])
   for(int i =0; i<(int)v.size(); i++){
     Mat imfft;
     displayDft(v[i], imfft);
-    string title = "dft"+to_string(i)+".jpg";
+    string title = name+"dft"+to_string(i)+"."+ext;
     imwrite(title, imfft);
+    cout << title<<endl;
   }
 
   //waitKey(0);
@@ -109,14 +114,12 @@ void deblur(vector<Mat> list_vec, int p, Mat * res){
   cv::divide(planes[0], w, planes[0]);
   cv::divide(planes[1], w, planes[1]);
   merge(planes, 2, up);
-
   idft(up,*res,DFT_SCALE | DFT_REAL_OUTPUT);
   res -> convertTo(*res, CV_8U);
-  imwrite("resultat."+ext, *res);
+  imwrite(name+"resultat"+"."+ext, *res);
   Mat imfft;
   displayDft(*res, imfft);
-  imwrite("fftRes.png", imfft);
-
+  imwrite(name+"fftRes"+"."+ext, imfft);
 
 }
 
@@ -162,6 +165,6 @@ void displayDft(Mat img, Mat &magI){
   //magI.convertTo(magI, CV_8U);
   //imshow("spectrum_magnitude", magI);
   //imshow("Reconstructed", realI);
-  waitKey();
+  //waitKey();
 
 }

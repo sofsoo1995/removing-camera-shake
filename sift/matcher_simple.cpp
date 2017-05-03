@@ -31,16 +31,16 @@ vector<int> argsort(const vector<T> &v) {
 }
 //basic algebra
 cv::Point2f operator*(cv::Mat M, const cv::Point2f& p)
-{ 
-    cv::Mat_<double> src(3/*rows*/,1 /* cols */); 
+{
+    cv::Mat_<double> src(3/*rows*/,1 /* cols */);
 
-    src(0,0)=p.x; 
-    src(1,0)=p.y; 
-    src(2,0)=1.0; 
+    src(0,0)=p.x;
+    src(1,0)=p.y;
+    src(2,0)=1.0;
 
-    cv::Mat_<double> dst = M*src; //USE MATRIX ALGEBRA 
-    return cv::Point2f(dst(0,0)/dst(2,0),dst(1,0)/dst(2,0)); 
-} 
+    cv::Mat_<double> dst = M*src; //USE MATRIX ALGEBRA
+    return cv::Point2f(dst(0,0)/dst(2,0),dst(1,0)/dst(2,0));
+}
 
 //Combinatory
 double logCombi(int n,int k) {
@@ -73,7 +73,7 @@ vector<int> generate_random_sample(const int n_sample, const vector<DMatch> good
 }
 void bestNFA(const vector<double> log_n, const vector<double> log_k, const vector<double> errors, int n, const int n_sample ,const double alpha0, double &minNFA, int &bestk){
   int result =0;
-  minNFA = DBL_MAX-1; 
+  minNFA = DBL_MAX-1;
   bestk = 0;
   for(int i =n_sample+1;i<(int)errors.size(); i++){
     double err;
@@ -93,19 +93,19 @@ double symetric_error(const Mat_<double> M, const Point2f X1, const Point2f X2){
   Point2f p2= M.inv()*X2-X1;
   return sqrt(p.x*p.x + p.y*p.y) + sqrt(p2.x*p2.x + p2.y*p2.y);
 }
-double homography(vector<int> index, const vector<DMatch> good_matches, 
+double homography(vector<int> index, const vector<DMatch> good_matches,
 	       const vector<KeyPoint> keypoints_1, const vector<KeyPoint> keypoints_2, Mat &H ){
-  
-  
+
+
   Mat_<double> A(index.size()*2, 9);// matrix to solve
-  
+
   vector<Point2f> list_X;//list of points X
   vector<Point2f> list_Xp;//list of X'
   unsigned int N = index.size();//size
   //centroid for matrix T and T'
   Point2f c(0,0);
   Point2f cp(0,0);
-    
+
   for(unsigned int i=0;i<index.size();i++){
     int b = index[i];
     DMatch match = good_matches[b];
@@ -119,12 +119,12 @@ double homography(vector<int> index, const vector<DMatch> good_matches,
     list_Xp.push_back(Xprime);
     c += X;
     cp += Xprime;
-    
+
     //creation of this matrix to find the best homography
     //Point2f test = xi.pt;
     //cout<<"point:" <<test<<endl;
   }
-  
+
 
   c = (1.0/N) * c;
   cp = (1.0/N) * cp;
@@ -150,12 +150,12 @@ double homography(vector<int> index, const vector<DMatch> good_matches,
   T.at<double>(0,0)= 1/var;
   T.at<double>(1,1)= 1/var;
   T.at<double>(2,2)= 1;
-  T.at<double>(0,2)=-c.x/var;  
+  T.at<double>(0,2)=-c.x/var;
   T.at<double>(1,2)= -c.y/var;
   Tp.at<double>(0,0)= 1/varp;
   Tp.at<double>(1,1)= 1/varp;
   Tp.at<double>(2,2)= 1;
-  Tp.at<double>(0,2)=-cp.x/varp;  
+  Tp.at<double>(0,2)=-cp.x/varp;
   Tp.at<double>(1,2)= -cp.y/varp;
   //cout<<T<<endl;
   for (unsigned int i=0; i < index.size(); i++) {
@@ -183,7 +183,7 @@ double homography(vector<int> index, const vector<DMatch> good_matches,
     A.at<double>(2*i+1, 7) = -Xprime.y * X.y;
     A.at<double>(2*i+1, 8) = -Xprime.y;
   }
-  
+
   Mat S, U, Vt, V;
   cv::SVD::compute(A, S, U, Vt, cv::SVD::FULL_UV);
   cv::transpose(Vt, V);
@@ -194,26 +194,26 @@ double homography(vector<int> index, const vector<DMatch> good_matches,
   H = Tp.inv()*H*T;
   if(determinant(H)<0)
     H = -H;
-  
+
   double scale = H.at<double>(2,2);
-  if(abs(scale) < EPS) return 0.0; 
+  if(abs(scale) < EPS) return 0.0;
   //cout<<"H"<<endl<<H<<endl<<endl;
   //cout<<"scale:"<<scale<<endl;
   //if(determinant(H)<0) H = -H;
   H = H * (1.0/scale);
-  
+
   for(int j = 0; j<(int)list_X.size();j++){
     Point2f X = list_X[j];
     Point2f Xprime = list_Xp[j];
     if(H.at<double>(2,0)*Xprime.x+ H.at<double>(2,1)*Xprime.y + H.at<double>(2,2) <= 0)
       return 0.0;
   }
-  
-  
+
+
   //cout<<H<<endl;
   //cout<<S<<endl;
   // *****to check the conditionning of h
-  
+
   //cout<<S.at<double>(0,0)<<endl;
   //cout<<S.at<double>(S.rows-1,0)<<endl;
   return abs(determinant(H));
@@ -223,12 +223,12 @@ bool compareByDistance(const DMatch &a, const DMatch &b){
 }
 
 int recalage(Mat input, Mat input2, Mat &output, int n_iter){
-  Ptr<SIFT> f2d = SIFT::create(); 
-  
-  
-    if( !input.data || !input2.data ){ 
-      std::cout<< " --(!) Error reading images " << std::endl; 
-      return -1; 
+  Ptr<SIFT> f2d = SIFT::create();
+
+
+    if( !input.data || !input2.data ){
+      std::cout<< " --(!) Error reading images " << std::endl;
+      return -1;
     }
     //SIFt to detect descriptors
   std::vector<KeyPoint> keypoints_1, keypoints_2;
@@ -240,36 +240,36 @@ int recalage(Mat input, Mat input2, Mat &output, int n_iter){
   FlannBasedMatcher matcher;
   std::vector<DMatch> matches;
   matcher.match(descriptor_1, descriptor_2, matches);
-  
+
   //we take the twenty best matches.
   std::sort(matches.begin(), matches.end(), compareByDistance);
   std::vector< DMatch > good_matches ;
   good_matches.assign(matches.begin(), matches.end());
-      
+
   Mat img_matches;
   drawMatches( input, keypoints_1, input2, keypoints_2,
                good_matches, img_matches, Scalar::all(-1), Scalar::all(-1),
                vector<char>(), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS );
   cv::imwrite("match.png", img_matches);
-  // calcul homography 
-  
+  // calcul homography
+
   //init
   int n = (int) good_matches.size();
   int n_sample = 4;
   vector<double> log_n;
   vector<double> log_k;
-  
+
   for(int k =0;k<=n;k++){
     log_n.push_back(logCombi(n,k));
     log_k.push_back(logCombi(k,n_sample));
     //cout<<n<<endl;
     }
-  
 
-  
+
+
   int reserve = n_iter/10;
-  
-  
+
+
   double minNFA= DBL_MAX-1;
   int bestk =1;
   Mat_<double> bestH(3,3);
@@ -287,8 +287,8 @@ int recalage(Mat input, Mat input2, Mat &output, int n_iter){
     //2) homography estimation
     double ratio = homography(rand_sample, good_matches, keypoints_1, keypoints_2, H);
     //cout<<ratio<<endl;
-        // 3) calculation of errors for all points 
-    
+        // 3) calculation of errors for all points
+
     if(ratio >= 0.1){
       for(auto m : good_matches){
 	int queryIdx = m.queryIdx;
@@ -298,9 +298,9 @@ int recalage(Mat input, Mat input2, Mat &output, int n_iter){
 	//cout<<H<<endl;
 	errors.push_back(symetric_error(H, pt, pt2));
 	//cout<<"error :"<< symetric_error(H, pt, pt2)<<endl;
-      
+
       }
-    
+
 
       //4) sorting the error keep track of indexes of the matches
       vector<int> index_match = argsort(errors);
@@ -315,12 +315,12 @@ int recalage(Mat input, Mat input2, Mat &output, int n_iter){
 	minNFA = nfa;
 	inliers.clear();
 	inliers.assign(index_match.begin(), index_match.begin()+k);
-	
+
 	bestH = H;
 	better = true;
       }
     }
-    
+
   }
   if((better && minNFA<0)|| (i ==n_iter-1 && reserve)) {
       vector<DMatch> better_good_matches;
@@ -340,13 +340,12 @@ int recalage(Mat input, Mat input2, Mat &output, int n_iter){
   std::cout<<"H :"<<bestH<<endl;
   cout<<"NFA:"<<minNFA<<endl;
   cout<<"number of inliers : "<<inliers.size()<<endl;
-
   //creation of matrix
-  
-  
+
+
     // Add results to image and save.
   output;
   cv::warpPerspective(input, output, bestH, input.size(),INTER_LINEAR);
   //cv::drawKeypoints(input, keypoints_1, output);
-  
+  return (int) inliers.size();
 }
