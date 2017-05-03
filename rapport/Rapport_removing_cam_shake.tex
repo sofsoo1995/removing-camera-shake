@@ -103,6 +103,7 @@ l'image originale utilisée et à la meilleure des images floues.
 \caption{Meilleur input}
 \label{fig:Bestflou}
 \end{subfigure}
+
 \caption{Résultat de l'algorithme pour 4 images recalées}
 \label{fig:arctriomphe}
 \end{figure}
@@ -119,15 +120,17 @@ INSERER IMAGE AVEC 1000 iter vs 2000 iter (vs 10000 iter)
 \paragraph{}
 A compléter : analyse de la méthode, points forts / faibles, limites et améliorations possibles
 Pb : recalage d'images floues.. ? tester les limites
-\paragraph{}
-Dans le cas des images parfaitements recalées on observe des artefacts le long des contours.
 
 \subsection{Recalage des images}
 
 \paragraph{}
-Le recalage s'avère être le point critique de notre implémentation. Une erreur lors du recalage d'une seule des images 
-engendre de très gros défauts dans le résultat. Ce problème nous a conduit à rejeter les images dont l'estimation d'homographie
-s'appuie sur un nombre de points trop faibles. Nous utilisons donc ici le critère : image rejetée si \(n_{inliers} < 100\). 
+Le recalage s'avère être le point critique de notre implémentation. 
+Une erreur lors du recalage d'une seule des images 
+engendre de très gros défauts dans le résultat comme on le voit sur la 
+figure~\ref{fig:mauvaisrecalage} page~\pageref{fig:mauvaisrecalage}.
+Ce problème nous a conduit à rejeter les images dont l'estimation d'homographie
+s'appuie sur un nombre de points trop faibles. Nous utilisons donc ici le critère : 
+image rejetée si \(n_{inliers} < 100\). 
 Nous sommes bien sûr conscient qu'un meilleur critère devrait être utilisé. 
 
 \begin{figure}[h]
@@ -139,6 +142,51 @@ Nous sommes bien sûr conscient qu'un meilleur critère devrait être utilisé.
 
 
 \subsection{Compromis temps de calcul - précision}
+\paragraph{}
 La phase de recalage peux prendre beaucoup de temps, mais est extrêmement importante pour avoir de bons résultats.
+Sur nos exemples il est nécessaire d'avoir au moins 2000 iterations dans l'algorithme ORSA pour obtenir un 
+recalage satisfaisant. 
+L'article évite cette question en supposant que le recalage est fait immédiatement grâce aux gyroscopes
+des smartphones, mais cela peut constituer une limite à l'application de la méthode en temps réel dans 
+d'autres appareils. Cependant on peut imaginer que se problème se règle avec l'augmentation des capacité de calcul 
+des appareils.
+
+\subsection{Flou non homogène : mouvement rotatif}
+\paragraph{}
+Une limite intrinsèque à cette méthode est l'hypothèse que le flou peut être modélisé comme une convolution
+par un noyau. C'est le cas pour les mouvement de translation et de certaines rotations mais ce n'est plus possible 
+lorsque l'appareil subit une rotation autour de son axe optique. La PSF dépend alors de la position du pixel dans l'image, 
+ce qui ne peut pas être modélisé par une convolution avec un noyau.
+\paragraph{}
+Ce cas de figure peut pourtant se produire en situation réelle comme nous l'avons constaté 
+(Figure~\ref{fig:rotation} page~\pageref{fig:rotation})
+
+\begin{figure}[h]
+
+\begin{subfigure}{0.32\textwidth}
+\includegraphics[width=0.9\linewidth]{ressource/flou_rot_10kit.jpg} 
+\caption{Resultat}
+\label{fig:Bestflou}
+\end{subfigure}
+\begin{subfigure}{0.32\textwidth}
+\includegraphics[width=0.9\linewidth]{ressource/flou_rot_centre.png} 
+\caption{Centre de l'image}
+\label{fig:flouRotCenter}
+\end{subfigure}
+\begin{subfigure}{0.32\textwidth}
+\includegraphics[width=0.9\linewidth]{ressource/flou_rot_bottom.png} 
+\caption{Bas de l'image}
+\label{fig:flouRotBottom}
+\end{subfigure}
+
+
+\caption{Resultat suite à un mauvais recalage}
+\label{fig:rotation}
+\end{figure}
+
+\paragraph{}
+Le résultat est très bon au centre de l'image mais se dégrade vers les bords. Une solution envisageable pourrait être
+d'appliquer l'algorithme localement sur des portions de l'image suffisamment petite pour que 
+l'hypothèse de convolution par un noyau de flou soit valable.
 
 \end{document}          
